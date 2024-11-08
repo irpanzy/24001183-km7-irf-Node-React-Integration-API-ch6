@@ -35,12 +35,14 @@ function App() {
   // store data sedara state react nya
   const [shops, setShops] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   console.log(shops);
 
   // fetch data, fetch / axios
   useEffect(() => {
     const fetchShops = async () => {
+      setLoading(true);
       try {
         const response = await axios.get("http://localhost:3000/api/v1/shops");
         console.log(response);
@@ -52,7 +54,9 @@ function App() {
           setError("error");
         }
       } catch (error) {
-        console.log(error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -87,8 +91,9 @@ function App() {
       </header>
       <main className="text-center">
         {/* {loading && <P> loading...</P>} */}
+        {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
-        {!error && (
+        {!loading && !error && (
           <section className="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {" "}
             {shops.map((shop, index) => (
