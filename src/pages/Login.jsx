@@ -1,24 +1,23 @@
 import { useState } from "react";
 import axios from "axios";
-import Notification from "../components/navbar/Notifications/Notification";
+import Notification from "../components/Notifications/Notification";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [notification, setNotification] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/login",
-        {
+      const response = await axios.post("/auth/login", {
           email,
           password,
-        }
-      );
+        });
       console.log(response);
 
       if (response.data.isSuccess) {
@@ -31,8 +30,19 @@ function Login() {
           "rahasia punya imam",
           "aku bangga bgt sama kalian FSW2 !"
         );
+
+        setNotification({
+          type: "success",
+          message: response.data.message || "Successfully login",
+          description: "You are now redirect to homepage",
+        });
+
+        setTimeout(() => {
+          navigate("/");
+          navigate(0);
+        }, 2000);
       } else {
-        setError(response.data.message);
+        console.log("MASUK SINI GAK????");
       }
     } catch (err) {
       console.log("error sini gak");
@@ -40,18 +50,25 @@ function Login() {
 
       setNotification({
         type: "error",
-        message: err.response.data.message || "An error occurred",
+        message: err.response.data.message || "An error occured",
         description: "please try again",
       });
     }
+
+    setTimeout(() => setNotification(null), 2000);
   };
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       {notification && (
-        <Notification type={""} message={""} description={""} onClose={""} />
+        <Notification
+          type={notification.type}
+          message={notification.message}
+          description={notification.description}
+          onClose={() => setNotification(null)}
+        />
       )}
-      
+
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           alt="Your Company"

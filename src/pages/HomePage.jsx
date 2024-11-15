@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import "../App.css";
+import axiosInstance from "../api/axiosInstance";
 
 const people = [
   {
@@ -24,16 +25,8 @@ function Homepage() {
       setLoading(true);
 
       try {
-        const token = localStorage.getItem("token");
-
-        const response = await axios.get("http://localhost:3000/api/v1/shops", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log(response);
-
+        const response = await axiosInstance.get("/shops");
+        
         const data = response.data;
         if (data.isSuccess) {
           setShops(data.data.shops);
